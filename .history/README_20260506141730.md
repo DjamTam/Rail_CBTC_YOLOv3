@@ -1,0 +1,140 @@
+# Rail/CBTC Supervision (YOLOv3) – Prototype
+
+> **Goal (Siemens Mobility–friendly):** Build a *rail/CBTC supervision prototype* (simulation) that detects **persons** with **YOLOv3** on a platform/trackside video, applies a **robust safety decision** (N consecutive frames + cooldown), logs events for audit, exposes a **/status API** for integration, and generates validation metrics + a short report.
+>
+> ✅ **No real vehicle control**: `STOP_REQUEST` is a **simulated** safety signal.
+
+## Requirements / Specification
+
+This project implements a simulation-grade **rail/CBTC supervision module** that detects **persons** using **YOLOv3** on a trackside/platform video stream. The system must provide a **robust safety decision** using (1) confirmation across N consecutive frames and (2) a cooldown to limit repeated alerts. It must output system states (`SAFE`, `UNCERTAIN`, `STOP_REQUEST`, `COOLDOWN`), produce structured logs for audit, expose `/status` via a REST API for integration, and generate validation artifacts (metrics + report). Limitations and an industrialization roadmap (ROI calibration, dataset evaluation, embedded optimization) are documented.
+
+## Project Structure
+
+```
+rail-cbtc-yolo3-supervision/
+├─ README.md
+├─ requirements.txt
+├─ .gitignore
+├─ assets/
+│  ├─ coco.names
+│  ├─ yolov3.cfg
+│  └─ yolov3.weights            # download (DO NOT COMMIT)
+├─ data/
+│  └─ sample_track_video.mp4    # optional (DO NOT COMMIT)
+├─ outputs/
+│  ├─ events.jsonl
+│  ├─ metrics.json
+│  ├─ report.md
+│  └─ roi_polygon.json
+├─ src/
+│  ├─ config.py
+│  ├─ detector_yolo.py
+│  ├─ roi.py
+│  ├─ roi_picker.py
+│  ├─ decision.py
+│  ├─ logger.py
+│  ├─ metrics.py
+│  ├─ api.py
+│  └─ run_pipeline.py
+└─ tests/
+   └─ test_decision.py
+```
+
+## Setup
+
+### Prerequisites
+
+- Python 3.9+
+- VS Code
+- Git
+
+### Virtual Environment
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### YOLOv3 Assets
+
+Download and place in `assets/`:
+
+- `yolov3.cfg`
+- `yolov3.weights` (large, do not commit)
+- `coco.names` (must contain "person" class)
+
+### Video Input (Optional)
+
+Place optional test video at `data/sample_track_video.mp4`
+
+## Usage
+
+### 1. Pick ROI (Region of Interest)
+
+```bash
+# Using video
+python src/roi_picker.py --video data/sample_track_video.mp4 --out outputs/roi_polygon.json
+
+# Using webcam
+python src/roi_picker.py --camera --camera_index 0 --out outputs/roi_polygon.json
+```
+
+Click points on the frame to define the critical trackside/platform zone (minimum 3 points).
+
+### 2. Run Pipeline
+
+```bash
+python src/run_pipeline.py
+```
+
+Press ESC to stop.
+
+### 3. Check API
+
+While pipeline runs, check the REST API:
+
+- http://127.0.0.1:5000/health
+- http://127.0.0.1:5000/status
+
+## Unit Tests
+
+```bash
+pytest -q
+```
+
+## Outputs
+
+- `outputs/events.jsonl` – Structured event log (STOP_REQUEST, UNCERTAIN)
+- `outputs/metrics.json` – FPS, frame count, detection statistics
+- `outputs/report.md` – Validation report with notes
+- `outputs/roi_polygon.json` – Saved ROI polygon from picker
+
+## Key Modules
+
+- **config.py**: Centralized configuration (thresholds, paths, ROI)
+- **detector_yolo.py**: YOLOv3 person detection
+- **roi.py**: Polygon-based ROI filtering
+- **roi_picker.py**: Interactive click-based ROI selection
+- **decision.py**: Robust safety decision logic (N-frame confirmation + cooldown)
+- **logger.py**: Structured event logging
+- **metrics.py**: Runtime metrics and report generation
+- **api.py**: Flask REST API for system status
+- **run_pipeline.py**: Main video processing pipeline
+- **test_decision.py**: Unit tests for decision logic
+
+## Limitations & Future Work
+
+- Prototype uses pretrained YOLOv3 (COCO). No fine-tuning.
+- ROI must be calibrated per scene.
+- STOP_REQUEST is simulated only (no real vehicle control).
+- Next steps: custom dataset, precision/recall evaluation, embedded optimization (Tiny-YOLO, quantization).
+
+## License
+
+This is a prototype for demonstration and educational purposes.

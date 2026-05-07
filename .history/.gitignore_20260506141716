@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+outputs/
+assets/yolov3.weights
+data/*.mp4
