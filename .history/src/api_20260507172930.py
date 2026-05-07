@@ -475,7 +475,7 @@ def create_app(shared_status: dict, status_lock: threading.Lock):
         const cars = data.cars_in_roi || 0;
         const confidence = (data.max_confidence || 0).toFixed(2);
         const fps = (data.fps_avg || 0).toFixed(1);
-        const frameCount = data.frames || 0;
+        const frameCount = data.frame_count || 0;
 
         // Mise à jour du badge de décision
         const decisionBadge = document.getElementById('decisionBadge');

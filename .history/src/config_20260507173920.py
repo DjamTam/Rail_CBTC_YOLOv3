@@ -21,7 +21,7 @@ class Config:
 
     # === Décision robuste de sécurité (N images consécutives) ===
     CONFIRM_FRAMES: int = 5  # Nombre de frames consécutives pour confirmer une détection
-    COOLDOWN_SECONDS: float = 2.0  # Délai d'attente avant une nouvelle alerte STOP
+    COOLDOWN_SECONDS: float = 1.5  # Délai d'attente avant une nouvelle alerte STOP
 
     # === Zone d'intérêt (ROI - Region Of Interest) / Zone critique ===
     ROI_POLYGON: List[Tuple[int, int]] = None  # Polygone définissant la zone de surveillance (points X,Y)

@@ -101,11 +101,6 @@ def main():
         "max_confidence_person": 0.0,
         "max_confidence_car": 0.0,
         "fps_avg": 0.0,
-        "frames": 0,
-        "elapsed_sec": 0.0,
-        "stop_requests": 0,
-        "uncertain_frames": 0,
-        "max_confidence_seen": 0.0,
         "recent_events": []  # Real-time event buffer
     }
 
