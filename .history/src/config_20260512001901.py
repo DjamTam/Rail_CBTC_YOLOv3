@@ -20,7 +20,7 @@ class Config:
     DETECT_CLASSES: List[str] = None  # Classes à détecter (None = "person" uniquement)
 
     # === Décision robuste de sécurité (N images consécutives) ===
-    CONFIRM_FRAMES: int = 5  # Nombre de frames consécutives pour confirmer une détection
+    CONFIRM_FRAMES: int = 3  # Nombre de frames consécutives pour confirmer une détection
     COOLDOWN_SECONDS: float = 2.0  # Délai d'attente avant une nouvelle alerte STOP
 
     # === Zone d'intérêt (ROI - Region Of Interest) / Zone critique ===
